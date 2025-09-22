@@ -82,7 +82,7 @@ void worst(int *arr, int l, int r)
     }
 }
 
-void main()
+void plotter()
 {
 
     FILE *f1 = fopen("me_best.txt", "a");
@@ -118,4 +118,27 @@ void main()
     }
     fclose(f1);
     fclose(f2);
+}
+
+void main()
+{
+    int n, arr[100];
+    printf("\nEnter number of elements : ");
+    scanf("%d", &n);
+    printf("\nenter element : ");
+    for (int i = 0; i < n; i++)
+    {
+        scanf("%d", &arr[i]);
+    }
+    printf("\nBefore mergesort sort : \n");
+    for (int i = 0; i < n; i++)
+    {
+        printf("%d\t", arr[i]);
+    }
+    mergesort(arr, 0, n - 1);
+    printf("\nAfter mergesort sort :\n");
+    for (int i = 0; i < n; i++)
+    {
+        printf("%d\t", arr[i]);
+    }
 }

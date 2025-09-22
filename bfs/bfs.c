@@ -1,67 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int q[100], f = 0, r = 0, graph[100][100], visit[100], dfs[150], n, count = 0;
+int count = 0;
+int graph[40][40], visited[40] = {0}, n, f = 0, r = 0, ans[40], q[40], parent[40], acyclic = 1, con = 1, k = 0;
 
 void bfs(int v)
 {
+    f = 0;
+    r = 0;
+    visited[v] = 1;
     q[f] = v;
-    int k = 0;
+    k = 0;
     while (f <= r)
     {
-        int i = q[f++];
-        dfs[k++] = i;
-        visit[i] = 1;
-        for (int j = 0; j < n; j++)
+        int j = q[f++];
+        ans[k++] = j;
+        for (int i = 0; i < n; i++)
         {
             count++;
-            if (graph[i][j] && !visit[j])
+            printf("  %d", count);
+            if (graph[j][i] && !visited[i])
             {
-                q[++r] = j;
-                visit[j] = 1;
+                parent[i] = j;
+                visited[i] = 1;
+                q[++r] = i;
+            }
+            else if (graph[j][i] && visited[i] && i != parent[j])
+            {
+                acyclic = 0;
             }
         }
-    }
-}
-
-void tester()
-{
-    int i = 0, dfs[100], k = 0, visit[100];
-
-    scanf("%d", &n);
-
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            scanf("%d", &graph[i][j]);
-        }
-    }
-    for (int i = 0; i < n; i++)
-    {
-        visit[i] = 0;
-    }
-
-    bfs(0);
-
-    for (int i = 0; i < n; i++)
-    {
-        printf("%d\t", dfs[i]);
     }
 }
 
 void plotter(int n2)
 {
     FILE *f1, *f2;
-    f1 = fopen("bfsb.txt", "a");
-    f2 = fopen("bfsw.txt", "a");
-    for (int n1 = 4; n1 <= 8; n1++)
+    f1 = fopen("b.txt", "a");
+    f2 = fopen("w.txt", "a");
+
+    for (n = 4; n <= 8; n++)
     {
         if (n2 == 0)
         {
-            for (int i = 0; i < n1; i++)
+            for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < n1; j++)
+                for (int j = 0; j < n; j++)
                 {
                     if (i == j + 1 || j == i + 1)
                     {
@@ -76,48 +60,95 @@ void plotter(int n2)
         }
         else
         {
-            for (int i = 0; i < n1; i++)
+            for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < n1; j++)
+                for (int j = 0; j < n; j++)
                 {
                     if (i == j)
                     {
-                        graph[i][j] = 0;
+                        graph[i][j] = 1;
                     }
                     else
                     {
-                        graph[i][j] = 1;
+                        graph[i][j] = 0;
                     }
                 }
             }
         }
-        for (int i = 0; i < n1; i++)
-        {
-            visit[i] = 0;
-        }
         count = 0;
-        n = n1;
-        f = 0;
-        r = 0;
-        for (int i = 0; i < n1; i++)
+        for (int i = 0; i < n; i++)
         {
-            if (!visit[i])
-                bfs(0);
+            visited[i] = 0;
         }
+
+        bfs(0);
+
+        for (int i = 0; i < n; i++)
+        {
+            if (!visited[i])
+            {
+                bfs(i);
+            }
+        }
+
         if (n2 == 0)
         {
-            fprintf(f1, "%d\t%d\n", n1, count);
+            fprintf(f1, "%d\t%d\n", n, count);
         }
         else
         {
-            fprintf(f2, "%d\t%d\n", n1, count);
+            fprintf(f2, "%d\t%d\n", n, count);
         }
     }
     fclose(f1);
     fclose(f2);
 }
 
-void main()
+void tester()
+{
+
+    printf("Enter n : ");
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+    bfs(0);
+
+    for (int i = 0; i < n; i++)
+    {
+        if (visited[i] != 1)
+        {
+            con = 0;
+        }
+    }
+
+    (con) ? printf("Connected graph\n") : printf("Disonnected graph\n");
+    (acyclic) ? printf("Acyclic graph\n") : printf("Cyclic graph\n");
+    printf("graph : \n");
+    for (int i = 0; i < k; i++)
+    {
+        printf("%d -> ", ans[i]);
+    }
+    printf("\n");
+    for (int i = 0; i < n; i++)
+    {
+        if (!visited[i])
+        {
+            printf("\nDisconnected part : \n");
+            bfs(i);
+            for (int i = 0; i < k; i++)
+            {
+                printf(" -> %d", ans[i]);
+            }
+        }
+    }
+}
+
+int main()
 {
     for (int i = 0; i < 2; i++)
     {
